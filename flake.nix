@@ -8,6 +8,7 @@
   flake-utils.lib.eachDefaultSystem (system:
   let
     # use the package set from haskell-nix to avoid rebuilding ghc
+    pkgs = nixpkgs.legacyPackages.${system};
     hpkgs = haskell-nix.legacyPackages.${system};
   in
   {
@@ -25,7 +26,8 @@
           cabal = "3.2.0.0";
           hlint = "3.2.3";
         };
-        exactEps    = true;
+        buildInputs = with pkgs; [ haskell-language-server ];
+        exactDeps   = true;
       };
       defaultPackage = self.packages.${system}.project.mkv-tagify.components.exes.mkv-tagify;
       defaultApp = {
