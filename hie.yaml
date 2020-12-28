@@ -1,4 +1,8 @@
 cradle:
   cabal:
-    - path: "./"
+    - path: "./app"
       component: "mkv-tagify"
+    - path: "./test"
+      component: "test"
+    - path: "./"
+      component: "lib:mkv-tagify"

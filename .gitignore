@@ -1,2 +1,4 @@
 dist-newstyle
 TMDb
+.DS_Store
+test.xml

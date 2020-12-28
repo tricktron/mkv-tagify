@@ -26,7 +26,7 @@
           cabal = "3.2.0.0";
           hlint = "3.2.3";
         };
-        buildInputs = with pkgs; [ haskell-language-server ];
+        buildInputs = [ pkgs.haskell-language-server hpkgs.haskellPackages.cabal-bounds ];
         exactDeps   = true;
       };
       defaultPackage = self.packages.${system}.project.mkv-tagify.components.exes.mkv-tagify;
