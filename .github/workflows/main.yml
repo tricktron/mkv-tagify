@@ -2,7 +2,7 @@
 
 name: Run Tests
 
-# Controls when the action will run. 
+# Controls when the action will run.
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
@@ -33,4 +33,4 @@ jobs:
             experimental-features = nix-command flakes
 
       # Runs a single command using the runners shell
-      - run: nix flake check
+      - run: nix build .#checks.x86_64-linux.test
