@@ -1,32 +1,27 @@
-# This is a basic workflow to help you get started with Actions
-
-name: Run Tests
-
-# Controls when the action will run.
+name: Test & Build
 on:
-  # Triggers the workflow on push or pull request events but only for the main branch
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  test:
-    # The type of runner that the job will run on
-    runs-on: macos-10.15
+  ci:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-10.15, ubuntu-20.04]
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      - name: Checkout Repository
+        uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - uses: cachix/install-nix-action@v12
+
+      - name: Install Nix with Flakes Support and Haskell Nix Binary Cache
+        uses: cachix/install-nix-action@v12
         with:
           install_url: https://github.com/numtide/nix-flakes-installer/releases/download/nix-2.4pre20201221_9fab14a/install
           extra_nix_config: |
@@ -34,9 +29,22 @@ jobs:
             substituters = https://hydra.iohk.io https://cache.nixos.org
             trusted-public-keys = hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
 
-      - uses: cachix/cachix-action@v8
+      - name: Use Cachix to Pull and Push Binary Cache
+        uses: cachix/cachix-action@v8
         with:
           name: tricktron
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-      # Runs a single command using the runners shell
-      - run: nix build .#checks.x86_64-darwin.test
+
+      - name: Run Tests
+        run: |
+          if [ "$RUNNER_OS" == "macOS" ]; then
+            nix build .#checks.x86_64-darwin.test
+          elif [ "$RUNNER_OS" == "Linux" ]; then
+            nix build .#checks.x86_64-linux.test
+          else
+            echo "RUNNER_OS not supported"
+            exit 1
+          fi
+
+      - name: Run Build
+        run: nix build .
