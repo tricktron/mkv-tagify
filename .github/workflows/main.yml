@@ -11,6 +11,7 @@ jobs:
     name: ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [macos-10.15, ubuntu-20.04]
 
@@ -34,6 +35,9 @@ jobs:
         with:
           name: tricktron
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+      
+      - name: Get Developer Shell
+        run: nix develop .
 
       - name: Run Tests
         run: |
