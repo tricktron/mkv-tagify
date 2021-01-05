@@ -29,7 +29,6 @@ jobs:
             experimental-features = nix-command flakes
             substituters = https://hydra.iohk.io https://cache.nixos.org
             trusted-public-keys = hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
-            trusted-users = root
             allowed-users = *
 
       - name: Use Cachix to Pull and Push Binary Cache
@@ -37,18 +36,16 @@ jobs:
         with:
           name: tricktron
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-          
+
       - name: Reload Nix Daemon to Respect Cachix cache
+        run: sudo pkill nix-daemon
+
+      - name: Debug Nix Conf File
         run: |
-          if [ "$RUNNER_OS" = "macOS" ]; then
-            sudo launchctl stop org.nixos.nix-daemon && sudo launchctl start org.nixos.nix-daemon
-          elif [ "$RUNNER_OS" = "Linux" ]; then
-            sudo systemctl restart nix-daemon
-          else
-            echo "RUNNER_OS not supported"
-            exit 1
-          fi
-      
+          echo "I am $USER"
+          cat /etc/nix/nix.conf
+          cat ~/.config/nix/nix.conf
+
       - name: Get Developer Shell
         run: nix develop .
 
@@ -62,6 +59,6 @@ jobs:
             echo "RUNNER_OS not supported"
             exit 1
           fi
-      
+
       - name: Run Build
         run: nix build .
