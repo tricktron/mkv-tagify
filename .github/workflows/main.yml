@@ -37,15 +37,6 @@ jobs:
           name: tricktron
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
-      - name: Reload Nix Daemon to Respect Cachix cache
-        run: sudo pkill nix-daemon
-
-      - name: Debug Nix Conf File
-        run: |
-          echo "I am $USER"
-          cat /etc/nix/nix.conf
-          cat ~/.config/nix/nix.conf
-
       - name: Get Developer Shell
         run: nix develop .
 
