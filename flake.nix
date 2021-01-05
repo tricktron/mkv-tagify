@@ -17,17 +17,9 @@
           name = "mkv-tagify";
         };
         compiler-nix-name = "ghc884";
-        index-state       = "2021-01-04T00:00:00Z";
-        materialized      = ./mkv-tagify.materialized;
-        plan-sha256       = "1apxn3cs8wfnvhmwq7262ra4pjkz77nnz8vr57ksrf0fh9673kas";
     };
   in
   {
-    # Keep this around to quickly build mkv-tagify-project.plan-nix for materialization
-    legacyPackages = {
-      mkv-tagify-project = project;
-    };
-
     packages = {
       mkv-tagify-lib = project.mkv-tagify.components.library;
       mkv-tagify-test = project.mkv-tagify.checks.test;
@@ -37,10 +29,19 @@
 
     devShell = project.shellFor {
       packages   = ps: with ps; [ mkv-tagify ];
-      withHoogle = true;
       tools      = {
-      cabal = "3.2.0.0";
-      hlint = "3.2.3";
+        cabal = {
+          version = "3.2.0.0";
+          index-state = "2021-01-04T00:00:00Z";
+          plan-sha256 = "0lmg2720nm58zxqzxs0ssfljvny2parx92y1qvz9bsff4q310idi";
+          materialized = ./cabal.materialized;
+        };
+        hlint = {
+          version = "3.2.3";
+          index-state = "2021-01-04T00:00:00Z";
+          plan-sha256 = "1f2pr5y6mwjjdvnsli05xfv41sg31wrx04npvdcyyqqb77wxjpsf";
+          materialized = ./hlint.materialized;
+        };
       };
       buildInputs = with pkgs.haskellPackages; [ haskell-language-server cabal-bounds ];
       exactDeps   = true;
