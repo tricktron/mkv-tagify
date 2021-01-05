@@ -29,6 +29,8 @@ jobs:
             experimental-features = nix-command flakes
             substituters = https://hydra.iohk.io https://cache.nixos.org
             trusted-public-keys = hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
+            trusted-users = root
+            allowed-users = *
 
       - name: Use Cachix to Pull and Push Binary Cache
         uses: cachix/cachix-action@v8
@@ -55,8 +57,11 @@ jobs:
           if [ "$RUNNER_OS" = "macOS" ]; then
             nix build .#checks.x86_64-darwin.test
           elif [ "$RUNNER_OS" = "Linux" ]; then
-            exit 0
+            nix build .#checks.x86_64-linux.test
           else
             echo "RUNNER_OS not supported"
             exit 1
           fi
+      
+      - name: Run Build
+        run: nix build .

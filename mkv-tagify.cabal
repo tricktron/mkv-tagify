@@ -1,6 +1,6 @@
 cabal-version:      >=1.10
 name:               mkv-tagify
-version:            0.1.0.0
+version:            0.1.0.1
 license-file:       LICENSE
 maintainer:         tgagnaux@gmail.com
 author:             Thibault Gagnaux
