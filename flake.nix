@@ -47,6 +47,13 @@
       exactDeps   = true;
     };
 
+    apps.mkv-tagify = {
+      type = "app";
+      program = "${project.mkv-tagify.components.exes.mkv-tagify}/bin/mkv-tagify";
+    };
+
+    defaultApp = self.apps.${system}.mkv-tagify;
+
     apps.repl = flake-utils.lib.mkApp {
         drv = pkgs.writeShellScriptBin "repl" ''
           confnix=$(mktemp)

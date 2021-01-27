@@ -47,20 +47,22 @@ xpEpisodeTarget = xpElem "Targets" $ xpElem "TargetTypeValue" xpPrim
 xpEpisode :: PU (Int, [(String, String)])
 xpEpisode = xpElem "Tag" $ xpPair xpEpisodeTarget xpSimpleList
 
-fetchSeasonFromTVId :: ItemID -> Int -> IO (Either Error [Episode])
-fetchSeasonFromTVId itemId seasonNr = runExceptT $ do
-  let key = T.pack "apikey"
+fetchSeasonFromTVId :: T.Text -> ItemID -> Int -> IO (Either Error [Episode])
+fetchSeasonFromTVId key itemId seasonNr = runExceptT $ do
   season <- ExceptT $ runTheMovieDB (defaultSettings key) (fetchTVSeason itemId seasonNr)
   return $ seasonEpisodes season
 
-fetchEpisodeFromTVId :: ItemID -> Int -> Int -> IO (Either Error Episode)
-fetchEpisodeFromTVId itemId seasonNr episodeNr = runExceptT $ do
-  episodes <- ExceptT $ fetchSeasonFromTVId itemId seasonNr
+fetchEpisodeFromTVId :: T.Text -> ItemID -> Int -> Int -> IO (Either Error Episode)
+fetchEpisodeFromTVId key itemId seasonNr episodeNr = runExceptT $ do
+  episodes <- ExceptT $ fetchSeasonFromTVId key itemId seasonNr
   return $ episodes !! episodeNr
 
 main :: IO ()
 main = do
-  episode <- fetchEpisodeFromTVId 33880 1 0
+  putStrLn "Please enter your TMDB api key"
+  apikey <- getLine
+  let key = T.pack $ apikey
+  episode <- fetchEpisodeFromTVId key 33880 1 0
   case episode of
     (Left err) -> print "Error"
     (Right e) -> do
